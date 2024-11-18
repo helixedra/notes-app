@@ -1,89 +1,144 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import classes from "./Note.module.scss";
-import DOMPurify from "dompurify";
+import {
+  RiBold,
+  RiUnderline,
+  RiItalic,
+  RiH1,
+  RiH2,
+  RiListCheck,
+  RiListOrdered,
+} from "@remixicon/react";
+
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  ContentState,
+  convertToRaw,
+} from "draft-js";
+import "draft-js/dist/Draft.css";
 
 function Note({ title, content, category }) {
   const [editMode, setEditMode] = useState(false);
-  const [text, setText] = useState(content);
-  const textareaRef = useRef();
+
+  const [editorState, setEditorState] = useState(() =>
+    content
+      ? EditorState.createWithContent(ContentState.createFromText(content))
+      : EditorState.createEmpty()
+  );
+
+  const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (editMode && editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, [editMode]);
+
+  const currentInlineStyle = editorState.getCurrentInlineStyle();
+
+  // Обробка inline-стилів
+  function handleInlineStyle(style) {
+    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+  }
+
+  // Обробка блочних стилів
+  function handleBlockStyle(style) {
+    setEditorState(RichUtils.toggleBlockType(editorState, style));
+  }
 
   function handleEditMode() {
     if (!editMode) {
-      setEditMode((prev) => !prev);
+      setEditMode(true);
     }
   }
 
-  function handleSave() {
-    console.log("saved");
-    setEditMode((prev) => !prev);
-  }
+  function handleSave(e) {
+    e.stopPropagation();
 
-  function handleCancel() {
-    console.log("canceled");
-    setEditMode((prev) => !prev);
-  }
-  function handleContent(e) {
-    setText(e.target.value);
-  }
-
-  function getSelectedText() {
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-
-    // console.log("Selected Text:", selectedText);
-    return { textarea: textarea.value, start, end, selectedText };
-  }
-
-  function handleEditBold() {
-    const { textarea, start, end, selectedText } = getSelectedText();
-    const newString = replaceSubstring(
-      textarea,
-      start,
-      end,
-      `<b>${selectedText}</b>`
+    const rawContent = JSON.stringify(
+      convertToRaw(editorState.getCurrentContent())
     );
-    setText(newString);
+    console.log("saved content:", rawContent);
+
+    setEditMode(false);
   }
 
-  function replaceSubstring(original, start, end, replacement) {
-    if (start < 0 || end > original.length || start >= end) {
-      throw new Error("Invalid start or end indices");
-    }
-    console.log(original);
-
-    // Extract parts of the string
-    const before = original.slice(0, start);
-    const after = original.slice(end);
-    // Concatenate with the replacement
-    return before + replacement + after;
+  function handleCancel(e) {
+    e.stopPropagation();
+    console.log("canceled");
+    setEditMode(false);
   }
+
+  // Масив для кнопок inline-стилів
+  const inlineStyles = [
+    { icon: <RiBold />, label: "Bold", style: "BOLD" },
+    { icon: <RiItalic />, label: "Italic", style: "ITALIC" },
+    { icon: <RiUnderline />, label: "Underline", style: "UNDERLINE" },
+  ];
+
+  // Масив для кнопок блочних стилів
+  const blockStyles = [
+    { icon: <RiH1 />, label: "H1", style: "header-one" },
+    { icon: <RiH2 />, label: "H2", style: "header-two" },
+    {
+      icon: <RiListCheck />,
+      label: "Bullet List",
+      style: "unordered-list-item",
+    },
+    {
+      icon: <RiListOrdered />,
+      label: "Numbered List",
+      style: "ordered-list-item",
+    },
+  ];
 
   return (
     <div className={classes.note_container} onClick={handleEditMode}>
-      {/* <div>{id}</div> */}
       <div>cat: {category}</div>
       <div className={classes.title}>{title}</div>
-      {editMode ? (
-        <textarea
-          ref={textareaRef}
-          className={classes.edit_area}
-          value={text}
-          onChange={handleContent}
-        ></textarea>
-      ) : (
-        <div
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
-        ></div>
+
+      {editMode && (
+        <div className={classes.toolbar}>
+          {/* Кнопки inline-стилів */}
+          {inlineStyles.map((button) => (
+            <button
+              key={button.style}
+              className={currentInlineStyle.has(button.style) ? "active" : ""}
+              onClick={() => handleInlineStyle(button.style)}
+              title={button.label}
+            >
+              {button.icon}
+            </button>
+          ))}
+          {/* Кнопки блочних стилів */}
+          {blockStyles.map((button) => (
+            <button
+              key={button.style}
+              onClick={() => handleBlockStyle(button.style)}
+              title={button.label}
+            >
+              {button.icon}
+            </button>
+          ))}
+        </div>
       )}
 
-      <div className={editMode ? `controls` : `controls hidden`}>
-        <button onClick={handleEditBold}>Bold</button>
-        <br />
-        <button onClick={handleSave}>Save</button>
-        <button onClick={handleCancel}>Cancel</button>
-      </div>
+      <Editor
+        ref={editorRef}
+        editorState={editorState}
+        onChange={setEditorState}
+      />
+
+      {editMode && (
+        <div className={classes.controls}>
+          <button onClick={handleSave}>Save</button>
+          <button className={classes.cancel} onClick={handleCancel}>
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }
