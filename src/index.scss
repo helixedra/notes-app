@@ -1,0 +1,45 @@
+@use "./common" as *;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+html,
+body {
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
+}
+
+main {
+  padding: calc($size * 2);
+}
+
+.grid_container {
+  display: grid;
+  gap: calc($size * 2);
+  // Small devices (landscape phones, 576px and up)
+  @media (min-width: 576px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  // Medium devices (tablets, 768px and up)
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  // X-Large devices (large desktops, 1200px and up)
+  @media (min-width: 1200px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  // XX-Large devices (larger desktops, 1400px and up)
+  @media (min-width: 1400px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  }
+}
+
+.hidden {
+  display: none;
+}

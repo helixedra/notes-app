@@ -1,0 +1,29 @@
+@use "./common" as *;
+
+.note {
+  &_container {
+    background-color: antiquewhite;
+    border-radius: $size;
+    padding: calc($size * 3);
+    @media (min-width: 576px) {
+      width: 100%;
+    }
+    .edit_area {
+      resize: none;
+      overflow: hidden;
+      width: 100%;
+      height: min-content;
+      outline: none;
+      border: none;
+      background-color: #ffffff00;
+    }
+    .title {
+      margin-bottom: $size;
+      padding-bottom: $size;
+      font-size: 1.2rem;
+      font-weight: bold;
+      width: 100%;
+      border-bottom: 1px solid #e7d2be;
+    }
+  }
+}
