@@ -5,8 +5,9 @@
   border-radius: $corners;
   padding: calc($size * 2);
   overflow-wrap: break-word;
-  inline-size: calc(100vw - (($size * 2) * 2));
+  //   inline-size: calc(100vw - (($size * 2) * 2));
   height: 100%;
+  //   width: 100%;
 }
 
 @mixin button($size, $corners) {

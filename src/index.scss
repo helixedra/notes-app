@@ -56,7 +56,7 @@ main {
 }
 .add_note_form {
   @include card($size, $corners);
-  margin-top: calc($size * 2);
+  // margin-top: calc($size * 2);
 
   input,
   textarea {
@@ -81,4 +81,63 @@ main {
   }
   .editable_content_area {
   }
+}
+
+$popup-bg: white;
+$popup-color: black;
+// $corners: 8px;
+// $size: 8px;
+
+dialog {
+  background-color: $popup-bg;
+  color: $popup-color;
+  border: none;
+  border-radius: $corners;
+  padding: 0;
+  margin: auto auto;
+  // width: 100%;
+}
+// .popup_container {
+//   padding: calc($size * 3);
+// }
+
+// .popup_header {
+//   line-height: calc($size * 3);
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   font-weight: bold;
+//   margin-bottom: calc($size * 3);
+// }
+::backdrop {
+  background-color: black;
+  opacity: 0.2;
+}
+.close_btn {
+  width: calc($size * 3);
+  height: calc($size * 3);
+  cursor: pointer;
+  transform: translate($size, 0), calc(-1 * $size);
+}
+.close_btn_icon {
+  width: calc($size * 1.5);
+  height: 2px;
+  display: block;
+  background-color: $popup-color;
+  position: relative;
+  transform: translate(6px, 11px) rotate(45deg);
+}
+.close_btn_icon::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: calc($size * 1.5);
+  height: 2px;
+  background-color: $popup-color;
+  left: 0;
+  top: 0;
+  transform: rotate(90deg);
+}
+.close_btn:hover {
+  opacity: 0.7;
 }
