@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 // import data from "./data.json";
 import Note from "./Note";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ function App() {
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [formTitle, setFormTitle] = useState("");
   const [formContent, setFormContent] = useState("");
+  const contentRef = useRef();
 
   const notes = useSelector((state) => state.notes);
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ function App() {
     setFormTitle(e.target.value);
   }
   function handleFromContent(e) {
+    contentRef.current.style = `height: ${e.target.scrollHeight}px;`;
     setFormContent(e.target.value);
   }
   return (
@@ -61,6 +63,7 @@ function App() {
               onChange={(e) => handleFromTitle(e)}
             ></input>
             <textarea
+              ref={contentRef}
               value={formContent}
               onChange={(e) => handleFromContent(e)}
               className="editable_content_area"
