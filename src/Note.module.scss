@@ -2,45 +2,45 @@
 
 .note {
   &_container {
-    background-color: antiquewhite;
-    border-radius: $corners;
-    padding: calc($size * 3);
+    @include card($size, $corners);
+    // resize: vertical;
     @media (min-width: 576px) {
       width: 100%;
     }
 
+    input,
+    textarea {
+      background-color: transparent;
+      border: none;
+      resize: none;
+      width: 100%;
+      padding: $size 0;
+      overflow: hidden;
+    }
+  }
+
+  &_header {
+    display: flex;
+    justify-content: space-between;
+
     .title {
       margin-bottom: $size;
       padding-bottom: $size;
-      font-size: 1.2rem;
-      font-weight: bold;
+      font-weight: 600;
       width: 100%;
-      border-bottom: 1px solid #e7d2be;
-    }
-  }
-}
-.toolbar {
-  margin-bottom: 10px;
-
-  button {
-    margin-right: 5px;
-    // padding: 5px 10px;
-    width: 16px;
-    height: 16px;
-    // padding: $size $size;
-    border: none;
-    border-radius: $corners;
-    background-color: transparent;
-    cursor: pointer;
-
-    &:hover {
-      //   background-color: #e0e0e0;
-      opacity: 0.7;
+      //
     }
 
-    &.active {
-      background-color: #000000;
-      //   font-weight: bold;
+    .delete_note {
+      border: none;
+      background-color: transparent;
+      //   width: calc($size * 2);
+      color: #000000;
+      opacity: 0.3;
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 }
@@ -49,14 +49,8 @@
   margin-top: 10px;
 
   button {
-    margin-right: 10px;
-    // padding: 5px 10px;
-    padding: $size calc($size * 2);
-    border: none;
-    background-color: #000000;
-    color: white;
-    border-radius: $corners;
-    cursor: pointer;
+    // margin-right: 10px;
+    @include primary_button;
 
     &:hover {
       //   background-color: #0056b3;
@@ -64,8 +58,7 @@
     }
 
     &.cancel {
-      background-color: transparent;
-      color: black;
+      @include additional_button;
 
       &:hover {
         // background-color: #c82333;

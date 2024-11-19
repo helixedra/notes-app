@@ -43,3 +43,42 @@ main {
 .hidden {
   display: none;
 }
+
+.add_note {
+  background-color: black;
+  padding: $size calc($size * 2);
+  color: white;
+  border: none;
+  border-radius: $corners;
+}
+.toolbar {
+  margin-bottom: calc($size * 3);
+}
+.add_note_form {
+  @include card($size, $corners);
+  margin-top: calc($size * 2);
+
+  input,
+  textarea {
+    background-color: transparent;
+    border: none;
+    resize: none;
+    width: 100%;
+    padding: $size 0;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .save_button {
+    @include primary_button();
+  }
+  .cancel_button {
+    @include additional_button();
+  }
+
+  .editable_title_area {
+    font-weight: 600;
+  }
+  .editable_content_area {
+  }
+}

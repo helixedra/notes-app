@@ -1,144 +1,88 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
+import { RiDeleteBin6Fill } from "@remixicon/react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteNote, changeNote } from "./store/notesSlice.js";
 import classes from "./Note.module.scss";
-import {
-  RiBold,
-  RiUnderline,
-  RiItalic,
-  RiH1,
-  RiH2,
-  RiListCheck,
-  RiListOrdered,
-} from "@remixicon/react";
 
-import {
-  Editor,
-  EditorState,
-  RichUtils,
-  ContentState,
-  convertToRaw,
-} from "draft-js";
-import "draft-js/dist/Draft.css";
-
-function Note({ title, content, category }) {
-  const [editMode, setEditMode] = useState(false);
-
-  const [editorState, setEditorState] = useState(() =>
-    content
-      ? EditorState.createWithContent(ContentState.createFromText(content))
-      : EditorState.createEmpty()
+function Note({ id }) {
+  const note = useSelector((state) =>
+    state.notes.find((note) => note.id === id)
   );
 
-  const editorRef = useRef(null);
+  const [editMode, setEditMode] = useState(false);
 
-  useEffect(() => {
-    if (editMode && editorRef.current) {
-      editorRef.current.focus();
-    }
-  }, [editMode]);
+  const dispatch = useDispatch();
 
-  const currentInlineStyle = editorState.getCurrentInlineStyle();
-
-  // Обробка inline-стилів
-  function handleInlineStyle(style) {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
-  }
-
-  // Обробка блочних стилів
-  function handleBlockStyle(style) {
-    setEditorState(RichUtils.toggleBlockType(editorState, style));
-  }
+  const contentRef = useRef();
+  const titleRef = useRef();
 
   function handleEditMode() {
     if (!editMode) {
-      setEditMode(true);
+      setEditMode((prev) => !prev);
     }
   }
 
-  function handleSave(e) {
-    e.stopPropagation();
+  function handleSave() {
+    const newState = {
+      title: titleRef.current.textContent,
+      content: contentRef.current.textContent,
+    };
 
-    const rawContent = JSON.stringify(
-      convertToRaw(editorState.getCurrentContent())
-    );
-    console.log("saved content:", rawContent);
-
+    dispatch(changeNote({ id, ...newState }));
     setEditMode(false);
   }
 
-  function handleCancel(e) {
-    e.stopPropagation();
-    console.log("canceled");
+  function handleCancel() {
+    if (titleRef.current) titleRef.current.textContent = note.title;
+    if (contentRef.current) contentRef.current.textContent = note.content;
+
     setEditMode(false);
   }
-
-  // Масив для кнопок inline-стилів
-  const inlineStyles = [
-    { icon: <RiBold />, label: "Bold", style: "BOLD" },
-    { icon: <RiItalic />, label: "Italic", style: "ITALIC" },
-    { icon: <RiUnderline />, label: "Underline", style: "UNDERLINE" },
-  ];
-
-  // Масив для кнопок блочних стилів
-  const blockStyles = [
-    { icon: <RiH1 />, label: "H1", style: "header-one" },
-    { icon: <RiH2 />, label: "H2", style: "header-two" },
-    {
-      icon: <RiListCheck />,
-      label: "Bullet List",
-      style: "unordered-list-item",
-    },
-    {
-      icon: <RiListOrdered />,
-      label: "Numbered List",
-      style: "ordered-list-item",
-    },
-  ];
 
   return (
     <div className={classes.note_container} onClick={handleEditMode}>
-      <div>cat: {category}</div>
-      <div className={classes.title}>{title}</div>
+      <div className={classes.note_header}>
+        {editMode ? (
+          <div
+            ref={titleRef}
+            className={classes.title}
+            contentEditable={true}
+            suppressContentEditableWarning={true}
+          >
+            {note.title}
+          </div>
+        ) : (
+          <div className={classes.title}>{note.title}</div>
+        )}
+        <button
+          className={classes.delete_note}
+          onClick={() => dispatch(deleteNote(id))}
+        >
+          <RiDeleteBin6Fill />
+        </button>
+      </div>
 
-      {editMode && (
-        <div className={classes.toolbar}>
-          {/* Кнопки inline-стилів */}
-          {inlineStyles.map((button) => (
-            <button
-              key={button.style}
-              className={currentInlineStyle.has(button.style) ? "active" : ""}
-              onClick={() => handleInlineStyle(button.style)}
-              title={button.label}
-            >
-              {button.icon}
-            </button>
-          ))}
-          {/* Кнопки блочних стилів */}
-          {blockStyles.map((button) => (
-            <button
-              key={button.style}
-              onClick={() => handleBlockStyle(button.style)}
-              title={button.label}
-            >
-              {button.icon}
-            </button>
-          ))}
+      {editMode ? (
+        <div
+          ref={contentRef}
+          className={classes.content}
+          contentEditable={true}
+          suppressContentEditableWarning={true}
+        >
+          {note.content}
         </div>
+      ) : (
+        <div>{note.content}</div>
       )}
 
-      <Editor
-        ref={editorRef}
-        editorState={editorState}
-        onChange={setEditorState}
-      />
-
-      {editMode && (
-        <div className={classes.controls}>
-          <button onClick={handleSave}>Save</button>
-          <button className={classes.cancel} onClick={handleCancel}>
-            Cancel
-          </button>
-        </div>
-      )}
+      <div
+        className={editMode ? classes.controls : `${classes.controls} hidden`}
+      >
+        <button onClick={handleSave}>Save</button>
+        <button className={classes.cancel} onClick={handleCancel}>
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

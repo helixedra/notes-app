@@ -1,0 +1,33 @@
+@use "./variables" as *;
+
+@mixin card($size, $corners) {
+  background-color: antiquewhite;
+  border-radius: $corners;
+  padding: calc($size * 2);
+  overflow-wrap: break-word;
+  inline-size: calc(100vw - (($size * 2) * 2));
+  height: 100%;
+}
+
+@mixin button($size, $corners) {
+  padding: $size calc($size * 2);
+  border: none;
+  border-radius: $corners;
+}
+
+@mixin primary_button {
+  @include button($size, $corners);
+  background-color: #000000;
+  color: white;
+}
+@mixin secodary_button {
+  @include button($size, $corners);
+  background-color: transparent;
+  border: 1px solid #0000005a;
+  color: #000000;
+}
+@mixin additional_button {
+  @include button($size, $corners);
+  background-color: transparent;
+  color: #000000;
+}
