@@ -4,9 +4,15 @@
   &_container {
     @include card($size, $corners);
     // resize: vertical;
-    @media (min-width: 576px) {
-      width: 100%;
-    }
+    overflow: hidden;
+    max-height: 400px;
+    height: fit-content;
+    min-width: 300px;
+    width: 300px;
+
+    // @media (min-width: 576px) {
+    //   width: 100%;
+    // }
 
     input,
     textarea {
@@ -22,12 +28,15 @@
   &_header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 
     .title {
       margin-bottom: $size;
       padding-bottom: $size;
       font-weight: 600;
-      width: 100%;
+      width: 90%;
+      max-height: 64px;
+      overflow: hidden;
       //
     }
 
@@ -42,6 +51,9 @@
         opacity: 1;
       }
     }
+  }
+  &_content {
+    // overflow: hidden;
   }
 }
 

@@ -8,6 +8,8 @@ function Note({ id, edit }) {
     state.notes.find((note) => note.id === id)
   );
 
+  const contentPreview = () => note.content.substring(0, 450) + "...";
+
   const dispatch = useDispatch();
 
   function handleDelete(event) {
@@ -16,16 +18,20 @@ function Note({ id, edit }) {
   }
 
   return (
-    <div className={classes.note_container} onClick={() => edit(id)}>
-      <div className={classes.note_header}>
-        <div className={classes.title}>{note.title}</div>
+    <div className="masonry-item">
+      <div className={classes.note_container} onClick={() => edit(id)}>
+        <div className={classes.note_header}>
+          <div className={classes.title}>{note.title}</div>
 
-        <button className={classes.delete_note} onClick={handleDelete}>
-          <RiDeleteBin6Fill />
-        </button>
+          <button className={classes.delete_note} onClick={handleDelete}>
+            <RiDeleteBin6Fill />
+          </button>
+        </div>
+
+        <div className={classes.note_content}>
+          {note.content.length > 100 ? contentPreview() : note.content}
+        </div>
       </div>
-
-      <div>{note.content}</div>
     </div>
   );
 }

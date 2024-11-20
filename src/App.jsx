@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Note from "./Note";
 import { useSelector, useDispatch } from "react-redux";
 import { addNote, changeNote } from "./store/notesSlice.js";
 import Dialog from "./components/Dialog.jsx";
+import Masonry from "react-masonry-css";
 
 function App() {
   const [formTitle, setFormTitle] = useState("");
@@ -10,6 +11,15 @@ function App() {
   const [dialog, setDialog] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+
+  // Налаштування колонок
+  const breakpointColumnsObj = {
+    default: 5,
+    1644: 4,
+    1328: 3,
+    1012: 2,
+    712: 1,
+  };
 
   const contentRef = useRef();
 
@@ -35,6 +45,7 @@ function App() {
   function handleClearForm() {
     setFormTitle("");
     setFormContent("");
+    contentRef.current.style.removeProperty("height");
   }
 
   function handleEditNote(id) {
@@ -52,13 +63,27 @@ function App() {
     setFormTitle(e.target.value);
   }
   function handleFormContent(e) {
-    contentRef.current.style = `height: ${e.target.scrollHeight}px;`;
+    const textarea = e.target;
+
+    // Dynamically adjust height based on scrollHeight
+    textarea.style.height = "auto"; // Reset height to auto before recalculating
+    textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the scrollHeight
+
     setFormContent(e.target.value);
   }
+
+  // function getTextareaHeight(){
+  //   contentRef.current.style = `height: ${e.target.scrollHeight}px;`;
+  // }
 
   function handleDialog() {
     setDialog((state) => !state);
   }
+  useEffect(() => {
+    if (dialog && contentRef.current) {
+      contentRef.current.style.height = `${contentRef.current.scrollHeight}px`;
+    }
+  }, [dialog]);
 
   function handleSaveNote() {
     if (selectedNote !== null) {
@@ -84,36 +109,45 @@ function App() {
           </button>
         </div>
 
-        <div className="grid_container">
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {notes.map((item) => {
             return <Note {...item} key={item.id} edit={handleEditNote} />;
           })}
-        </div>
+        </Masonry>
       </main>
-      <Dialog dialog={dialog} cancel={handleCancel}>
+      <Dialog dialog={dialog}>
         <div className="add_note_form">
-          <input
-            placeholder="Title"
-            className="editable_title_area"
-            value={formTitle}
-            onChange={(e) => handleFormTitle(e)}
-          ></input>
-          <textarea
-            ref={contentRef}
-            value={formContent}
-            onChange={(e) => handleFormContent(e)}
-            className="editable_content_area"
-            placeholder="Take a note…"
-          ></textarea>
-          <button
-            className="save_button"
-            onClick={editMode ? handleSaveNote : handleAddNote}
-          >
-            Save
-          </button>
-          <button className="cancel_button" onClick={handleCancel}>
-            Cancel
-          </button>
+          <div className="container">
+            <input
+              placeholder="Title"
+              className="editable_title_area"
+              value={formTitle}
+              onChange={(e) => handleFormTitle(e)}
+            ></input>
+            <textarea
+              ref={contentRef}
+              value={formContent}
+              onChange={(e) => handleFormContent(e)}
+              className="editable_content_area"
+              placeholder="Take a note…"
+            ></textarea>
+          </div>
+
+          <div className="controls">
+            <button
+              className="save_button"
+              onClick={editMode ? handleSaveNote : handleAddNote}
+            >
+              Save
+            </button>
+            <button className="cancel_button" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
         </div>
       </Dialog>
     </>

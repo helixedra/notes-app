@@ -12,31 +12,71 @@ main {
   padding: calc($size * 2);
 }
 
+/* Контейнер для Masonry */
+.my-masonry-grid {
+  display: flex;
+  margin: 0 auto;
+  // margin-left: -16px; /* Компенсує padding між колонками */
+  width: min-content;
+}
+
+/* Колонки */
+.my-masonry-grid_column {
+  padding: 0 8px; /* Відступ між колонками */
+  background-clip: padding-box;
+}
+
+/* Елементи */
+.masonry-item {
+  // width: 300px; /* Фіксована ширина елементів */
+  // max-height: 400px; /* Максимальна висота елементів */
+  margin-bottom: 16px; /* Відступ між елементами */
+  // background: #e3e3e3;
+  // border-radius: 8px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // text-align: center;
+  // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .grid_container {
   display: grid;
+  grid-template-rows: masonry;
   gap: calc($size * 2);
+  margin: 0 auto;
+  width: fit-content;
+
+  // grid-template-rows: min-content;
   // Small devices (landscape phones, 576px and up)
+
   @media (min-width: 576px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: min-content;
+    // max-width: 376px;
   }
   // Medium devices (tablets, 768px and up)
   @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(2, min-content);
+    // max-width: 568px;
   }
 
   // Large devices (desktops, 992px and up)
   @media (min-width: 992px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, min-content);
+    // max-width: 792px;
   }
 
   // X-Large devices (large desktops, 1200px and up)
   @media (min-width: 1200px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, min-content);
+    // max-width: 1000px;
   }
 
   // XX-Large devices (larger desktops, 1400px and up)
   @media (min-width: 1400px) {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, min-content);
+    // max-width: 1200px;
   }
 }
 
@@ -80,6 +120,8 @@ main {
     font-weight: 600;
   }
   .editable_content_area {
+    max-height: 60vh;
+    overflow-y: visible;
   }
 }
 
@@ -95,6 +137,8 @@ dialog {
   border-radius: $corners;
   padding: 0;
   margin: auto auto;
+  overflow: hidden;
+  max-height: 80vh;
   // width: 100%;
 }
 // .popup_container {
